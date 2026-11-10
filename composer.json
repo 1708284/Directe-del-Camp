@@ -1,0 +1,27 @@
+{
+    "name": "directe-del-camp/plataforma-agricola",
+    "description": "Directe del Camp - Plataforma de venda directa de carn i productes ramaders (TFG)",
+    "type": "project",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Felix",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-pdo_pgsql": "*",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
