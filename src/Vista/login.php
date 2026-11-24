@@ -1,27 +1,40 @@
-<?php /** @var ?string $error @var string $csrf */ ?>
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <title>Iniciar sessió - Directe del Camp</title>
-</head>
-<body>
-<h1>Iniciar sessió</h1>
+<?php
+$pageTitle = 'Iniciar sessió';
+require __DIR__ . '/layouts/header.php';
+?>
 
-<?php if (!empty($error)): ?>
-    <p><strong><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></strong></p>
-<?php endif; ?>
+<div class="auth-wrapper">
+    <div class="card">
+        <h1 class="section-title">Iniciar sessió</h1>
+        <p class="section-subtitle mb-4">Accedeix al teu compte de Directe del Camp.</p>
 
-<form method="post" action="/login">
-    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
+        <?php if (!empty($error)) { ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php } ?>
 
-    <p><label>Email<br><input type="email" name="email" required autocomplete="email"></label></p>
-    <p><label>Contrasenya<br><input type="password" name="password" required autocomplete="current-password"></label></p>
+        <form method="POST" action="/login">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8'); ?>">
 
-    <p><button type="submit">Entrar</button></p>
-</form>
+            <div class="form-group">
+                <label for="login_email" class="form-label">Email</label>
+                <input id="login_email" type="email" name="email" class="form-control" required autocomplete="email">
+            </div>
 
-<p><a href="/auth/google">Identifica't amb Google</a></p>
-<p>No tens compte? <a href="/register">Registra't</a></p>
-</body>
-</html>
+            <div class="form-group">
+                <label for="login_pass" class="form-label">Contrasenya</label>
+                <input id="login_pass" type="password" name="password" class="form-control" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        </form>
+
+        <div class="divider"></div>
+        <a href="/auth/google" class="btn btn-secondary btn-block">Identifica't amb Google</a>
+
+        <div class="divider"></div>
+        <p class="text-muted" style="font-size: 14px;">No tens compte? <a href="/register" style="text-decoration: underline; font-weight: 600;">Registra't</a></p>
+        <p class="mt-2 text-muted" style="font-size: 14px;">Ets ramader o productor? <a href="/register-ramader" style="text-decoration: underline;">Registra la teva explotació aquí</a></p>
+    </div>
+</div>
+
+<?php require __DIR__ . '/layouts/footer.php'; ?>

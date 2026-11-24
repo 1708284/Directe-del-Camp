@@ -1,86 +1,111 @@
 <?php
-function escape_html(?string $v): string
-{
-    return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
+$pageTitle = 'Registre';
+require __DIR__ . '/layouts/header.php';
+
+$safeOld = [];
+if (isset($old) && is_array($old)) {
+    $safeOld = $old;
 }
 
-$old = isset($old) ? $old : [];
-$displayError = $error !== null ? $error : ($_SESSION['flash_error'] ?? null);
-unset($_SESSION['flash_error']);
+$displayError = null;
+if (isset($error) && $error !== null) {
+    $displayError = $error;
+}
+
+$nomVal = '';
+if (isset($safeOld['nom'])) {
+    $nomVal = (string) $safeOld['nom'];
+}
+
+$cognomsVal = '';
+if (isset($safeOld['cognoms'])) {
+    $cognomsVal = (string) $safeOld['cognoms'];
+}
+
+$telefonVal = '';
+if (isset($safeOld['telefon'])) {
+    $telefonVal = (string) $safeOld['telefon'];
+}
+
+$emailVal = '';
+if (isset($safeOld['email'])) {
+    $emailVal = (string) $safeOld['email'];
+}
 ?>
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <title>Registre - Directe del Camp</title>
-</head>
-<body>
-<h1>Crear compte</h1>
 
-<?php if (!empty($displayError)): ?>
-    <p style="color: red;"><strong><?= escape_html($displayError) ?></strong></p>
-<?php endif; ?>
+<div class="auth-wrapper">
+    <div class="card">
+        <h1 class="section-title">Crear compte</h1>
+        <p class="section-subtitle mb-4">Compra directament a les granges verificades de proximitat.</p>
 
-<form method="POST" action="/register">
-    <input type="hidden" name="csrf_token" value="<?= escape_html($csrf) ?>">
+        <?php if (!empty($displayError)) { ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars((string) $displayError, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php } ?>
 
-    <p>
-        <label>Nom *<br>
-            <input type="text" name="nom" required maxlength="100" value="<?= escape_html($old['nom'] ?? '') ?>">
-        </label>
-    </p>
+        <form method="POST" action="/register">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8'); ?>">
 
-    <p>
-        <label>Cognoms *<br>
-            <input type="text" name="cognoms" required maxlength="150" value="<?= escape_html($old['cognoms'] ?? '') ?>">
-        </label>
-    </p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reg_nom" class="form-label">Nom *</label>
+                    <input id="reg_nom" type="text" name="nom" class="form-control" required maxlength="100" value="<?php echo htmlspecialchars($nomVal, ENT_QUOTES, 'UTF-8'); ?>">
+                </div>
 
-    <p>
-        <label>Telèfon<br>
-            <input type="tel" name="telefon" maxlength="20" placeholder="Opcional" value="<?= escape_html($old['telefon'] ?? '') ?>">
-        </label>
-    </p>
+                <div class="form-group">
+                    <label for="reg_cognoms" class="form-label">Cognoms *</label>
+                    <input id="reg_cognoms" type="text" name="cognoms" class="form-control" required maxlength="150" value="<?php echo htmlspecialchars($cognomsVal, ENT_QUOTES, 'UTF-8'); ?>">
+                </div>
+            </div>
 
-    <p>
-        <label>Email *<br>
-            <input type="email" name="email" required autocomplete="email" maxlength="255" value="<?= escape_html($old['email'] ?? '') ?>">
-        </label>
-    </p>
+            <div class="form-group">
+                <label for="reg_telefon" class="form-label">Telèfon</label>
+                <input id="reg_telefon" type="tel" name="telefon" class="form-control" maxlength="20" placeholder="Opcional" value="<?php echo htmlspecialchars($telefonVal, ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
 
-    <p>
-        <label>Contrasenya * (mínim 8 caràcters)<br>
-            <input type="password" name="password" required minlength="8" maxlength="72" autocomplete="new-password">
-        </label>
-    </p>
+            <div class="form-group">
+                <label for="reg_email" class="form-label">Email *</label>
+                <input id="reg_email" type="email" name="email" class="form-control" required autocomplete="email" maxlength="255" value="<?php echo htmlspecialchars($emailVal, ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
 
-    <p>
-        <label>Confirmar contrasenya *<br>
-            <input type="password" name="password_confirm" required minlength="8" maxlength="72" autocomplete="new-password">
-        </label>
-    </p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reg_pass" class="form-label">Contrasenya * (mínim 8 caràcters)</label>
+                    <input id="reg_pass" type="password" name="password" class="form-control" required minlength="8" maxlength="72" autocomplete="new-password">
+                </div>
 
-    <p>
-        <label>
-            <input type="checkbox" name="consentiment_rgpd" value="1" required>
-            Accepto la política de privacitat i el tractament de les meves dades (RGPD) *
-        </label>
-    </p>
+                <div class="form-group">
+                    <label for="reg_pass2" class="form-label">Confirmar contrasenya *</label>
+                    <input id="reg_pass2" type="password" name="password_confirm" class="form-control" required minlength="8" maxlength="72" autocomplete="new-password">
+                </div>
+            </div>
 
-    <p><button type="submit">Registrar-me</button></p>
-</form>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="consentiment_rgpd" value="1" required>
+                    <span>Accepto la política de privacitat i el tractament de les meves dades (RGPD) *</span>
+                </label>
+            </div>
 
-<h2>O registra't amb Google</h2>
-<form method="get" action="/auth/google">
-    <p>
-        <label>
-            <input type="checkbox" name="rgpd" value="1" required>
-            Accepto la política de privacitat (RGPD).
-        </label>
-    </p>
-    <p><button type="submit">Identifica't amb Google</button></p>
-</form>
+            <button type="submit" class="btn btn-primary btn-block">Registrar-me</button>
+        </form>
 
-<p>Ja tens compte? <a href="/login">Inicia sessió</a></p>
-</body>
-</html>
+        <div class="divider"></div>
+
+        <h2 style="font-size: 16px; margin-bottom: 10px;">O registra't amb Google</h2>
+        <form method="GET" action="/auth/google">
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="rgpd" value="1" required>
+                    <span>Accepto la política de privacitat (RGPD).</span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-block">Identifica't amb Google</button>
+        </form>
+
+        <div class="divider"></div>
+        <p style="font-size: 14px;">Ets ramader o productor? <a href="/register-ramader" style="text-decoration: underline; font-weight: 600;">Registra la teva explotació aquí</a></p>
+        <p class="mt-2 text-muted" style="font-size: 14px;">Ja tens compte? <a href="/login" style="text-decoration: underline;">Inicia sessió</a></p>
+    </div>
+</div>
+
+<?php require __DIR__ . '/layouts/footer.php'; ?>

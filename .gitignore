@@ -1,8 +1,10 @@
-/vendor/
 .env
+vendor/
+client_secret_*.json
+client_secret*.json
+*:Zone.Identifier
+.vscode/
+.idea/
 *.log
 .DS_Store
 Thumbs.db
-.idea/
-.vscode/
-client_secret*.json
