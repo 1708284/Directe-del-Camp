@@ -61,6 +61,10 @@ $userInitial = strtoupper(mb_substr($sidebarUserName, 0, 1));
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Nou producte
                 </a>
+                <a href="/ramader/comandes" class="sidebar-link <?php if ($activeNav === 'comandes') { echo 'active'; } ?>">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+                    Comandes rebudes
+                </a>
             <?php } elseif ($sidebarRole === 'ADMIN') { ?>
                 <a href="/admin/ramaders" class="sidebar-link <?php if ($activeNav === 'ramaders') { echo 'active'; } ?>">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>

@@ -7,6 +7,7 @@ use App\Controlador\AuthController;
 use App\Controlador\CartController;
 use App\Controlador\CatalogController;
 use App\Controlador\CheckoutController;
+use App\Controlador\OrderController;
 use App\Controlador\ProductController;
 use App\Controlador\UserController;
 
@@ -23,6 +24,29 @@ if (php_sapi_name() === 'cli-server') {
 
 require __DIR__ . '/../vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
+
+$method = 'GET';
+if (isset($_SERVER['REQUEST_METHOD'])) {
+    $method = $_SERVER['REQUEST_METHOD'];
+}
+
+$rawUri = '/';
+if (isset($_SERVER['REQUEST_URI'])) {
+    $rawUri = $_SERVER['REQUEST_URI'];
+}
+
+$path = parse_url($rawUri, PHP_URL_PATH);
+if (!$path) {
+    $path = '/';
+}
+
+$route = $method . ' ' . $path;
+
+if ($route === 'POST /api/webhooks/stripe') {
+    $checkout = new CheckoutController();
+    $checkout->stripeWebhook();
+    exit;
+}
 
 $https = false;
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
@@ -51,29 +75,12 @@ if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://accounts.google.com");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://m.stripe.network; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://m.stripe.network; connect-src 'self' https://api.stripe.com https://m.stripe.network; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://accounts.google.com");
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: same-origin');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 header('Cache-Control: no-store');
-
-$method = 'GET';
-if (isset($_SERVER['REQUEST_METHOD'])) {
-    $method = $_SERVER['REQUEST_METHOD'];
-}
-
-$rawUri = '/';
-if (isset($_SERVER['REQUEST_URI'])) {
-    $rawUri = $_SERVER['REQUEST_URI'];
-}
-
-$path = parse_url($rawUri, PHP_URL_PATH);
-if (!$path) {
-    $path = '/';
-}
-
-$route = $method . ' ' . $path;
 
 if ($route === 'GET /') {
     $catalog = new CatalogController();
@@ -129,6 +136,12 @@ if ($route === 'GET /') {
 } elseif ($route === 'GET /checkout') {
     $checkout = new CheckoutController();
     $checkout->index();
+} elseif ($route === 'POST /checkout/crear-pagament') {
+    $checkout = new CheckoutController();
+    $checkout->createPayment();
+} elseif ($route === 'GET /checkout/confirmacio') {
+    $checkout = new CheckoutController();
+    $checkout->confirmation();
 } elseif ($route === 'GET /ramader/productes') {
     $product = new ProductController();
     $product->index();
@@ -156,6 +169,12 @@ if ($route === 'GET /') {
 } elseif ($route === 'POST /ramader/races/crear') {
     $product = new ProductController();
     $product->storeRaceAjax();
+} elseif ($route === 'GET /ramader/comandes') {
+    $order = new OrderController();
+    $order->rancherOrders();
+} elseif ($route === 'POST /ramader/comandes/estat') {
+    $order = new OrderController();
+    $order->updateRancherOrderStatus();
 } elseif ($route === 'GET /admin/ramaders') {
     $admin = new AdminController();
     $admin->pendingRanchers();
@@ -174,6 +193,9 @@ if ($route === 'GET /') {
 } elseif ($route === 'POST /perfil/adreces/eliminar') {
     $user = new UserController();
     $user->deleteAddress();
+} elseif ($route === 'GET /perfil/comandes') {
+    $order = new OrderController();
+    $order->consumerOrders();
 } else {
     http_response_code(404);
     echo '<!DOCTYPE html><html lang="ca"><head><meta charset="UTF-8"><title>404 - Directe del Camp</title><link rel="stylesheet" href="/css/styles.css"></head><body><main class="main-content"><div class="container"><div class="card"><h1>404 - Pàgina no trobada</h1><p class="mt-2 text-muted">La ruta sol·licitada no existeix.</p><p class="mt-4"><a href="/" class="btn btn-primary btn-sm">Tornar a l\'inici</a></p></div></div></main></body></html>';

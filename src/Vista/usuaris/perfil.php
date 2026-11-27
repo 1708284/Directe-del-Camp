@@ -39,6 +39,7 @@ if (isset($addresses) && is_array($addresses)) {
         <p class="section-subtitle">Gestiona les teves dades personals i adreces d'enviament refrigerat.</p>
     </div>
     <div class="actions-row">
+        <a href="/perfil/comandes" class="btn btn-secondary btn-sm">Les meves comandes</a>
         <?php if ($rol === 'RAMADER') { ?>
             <a href="/ramader/productes" class="btn btn-primary btn-sm">Panell Ramader</a>
         <?php } elseif ($rol === 'ADMIN') { ?>

@@ -10,6 +10,7 @@
             <a href="/cistella">Cistella</a>
             <?php if (!empty($currentUser)) { ?>
                 <a href="/perfil">El meu perfil</a>
+                <a href="/perfil/comandes">Les meves comandes</a>
             <?php } else { ?>
                 <a href="/login">Accedir</a>
             <?php } ?>
